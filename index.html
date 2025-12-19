@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的提问箱 | 静态版本</title>
+    <style>
+        /* 汇文明朝体字体声明 */
+        @font-face {
+            font-family: 'Huiwen Mingchao';
+            src: url('fonts/Huiwen-Mingchao.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* 配色方案 */
+        :root {
+            --primary-light: #fff5f7;
+            --primary-pink: #ffb6c1;
+            --primary-deep: #ff8fa3;
+            --white: #ffffff;
+            --gray-light: #f8f9fa;
+            --gray-border: #e9ecef;
+            --text-dark: #495057;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            
+            --font-ming: "Huiwen Mingchao", "Microsoft YaHei", 
+                         "Segoe UI", "PingFang SC", sans-serif;
+        }
+
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-ming);
+            background-color: var(--primary-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* 布局容器 */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 头部样式 */
+        .header {
+            text-align: center;
+            padding: 40px 0 30px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--gray-border);
+        }
+
+        .header h1 {
+            color: var(--primary-deep);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-shadow: 0.4px 0 0 currentColor, 
+                         0 0.4px 0 currentColor, 
+                         -0.4px 0 0 currentColor, 
+                         0 -0.4px 0 currentColor;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 182, 193, 0.2);
+        }
+
+        /* 导航栏 */
+        .nav-bar {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            color: var(--primary-deep);
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 182, 193, 0.15);
+            color: var(--primary-deep);
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-field, .textarea-field {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--gray-border);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-family: var(--font-ming);
+        }
+
+        .textarea-field {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .input-field:focus, .textarea-field:focus {
+            outline: none;
+            border-color: var(--primary-pink);
+            box-shadow: 0 0 0 3px rgba(255, 182, 193, 0.2);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            background: var(--primary-pink);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+            font-family: var(--font-ming);
+        }
+
+        .btn:hover {
+            background: var(--primary-deep);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 143, 163, 0.3);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.1rem;
+        }
+
+        /* 问答列表 */
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--gray-border);
+        }
+
+        .username {
+            font-weight: 600;
+            color: var(--primary-deep);
+        }
+
+        .time {
+            color: #868e96;
+            font-size: 0.9rem;
+        }
+
+        .question-content {
+            margin-bottom: 20px;
+            white-space: pre-wrap;
+        }
+
+        .answer-section {
+            background: var(--gray-light);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 3px solid #4dabf7;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-bar {
+                gap: 10px;
+            }
+            
+            .nav-link {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* 管理界面 */
+        #adminPanel {
+            margin-top: 30px;
+        }
+
+        #adminQuestionsList {
+            margin-top: 20px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+            background: #d3f9d8;
+            color: #2b8a3e;
+        }
+
+        /* 模态框 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 导航栏 -->
+        <div class="nav-bar">
+            <a href="#home" class="nav-link active" onclick="showSection('home')">
+                <i class="fas fa-home"></i> 公开问答
+            </a>
+            <a href="#ask" class="nav-link" onclick="showSection('ask')">
+                <i class="fas fa-pen"></i> 我要提问
+            </a>
+            <a href="#admin" class="nav-link" onclick="showSection('admin')">
+                <i class="fas fa-lock"></i> 管理后台
+            </a>
+        </div>
+
+        <!-- 主页：公开问答 -->
+        <div id="homeSection" class="section">
+            <div class="header">
+                <h1><i class="fas fa-question-circle"></i> 我的提问箱</h1>
+                <p>这里是公开的问答，你可以匿名提问</p>
+            </div>
+            
+            <div id="questionsList" class="questions-list">
+                <!-- 问题列表动态加载 -->
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <button onclick="showSection('ask')" class="btn">
+                    <i class="fas fa-plus"></i> 提问新问题
+                </button>
+                <button onclick="refreshQuestions()" class="btn" style="margin-left: 10px;">
+                    <i class="fas fa-sync-alt"></i> 刷新列表
+                </button>
+            </div>
+        </div>
+
+        <!-- 提问页面 -->
+        <div id="askSection" class="section" style="display: none;">
+            <div class="header">
+                <h1><i class="fas fa-pen"></i> 我要提问</h1>
+                <p>你可以匿名提问，也可以自定义用户名</p>
+            </div>
+            
+            <div class="card">
+                <form id="questionForm">
+                    <div class="form-group">
+                        <label for="username"><i class="fas fa-user"></i> 用户名（可选）</label>
+                        <input type="text" id="username" class="input-field" placeholder="不填写将显示为匿名用户">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="anonymous" checked>
+                            <label for="anonymous">保持匿名</label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="question"><i class="fas fa-question"></i> 你的问题</label>
+                        <textarea id="question" class="textarea-field" placeholder="在这里写下你的问题..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="isPublic" checked>
+                            <label for="isPublic">公开此问题（勾选后问题会显示在主页）</label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-submit">
+                        <i class="fas fa-paper-plane"></i> 发送问题
+                    </button>
+                </form>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button onclick="showSection('home')" class="btn">
+                    <i class="fas fa-arrow-left"></i> 返回主页
+                </button>
+            </div>
+        </div>
+
+        <!-- 管理后台 -->
+        <div id="adminSection" class="section" style="display: none;">
+            <div class="header">
+                <h1><i class="fas fa-lock"></i> 管理后台</h1>
+                <p>在这里查看所有提问并进行回复</p>
+            </div>
+            
+            <!-- 密码验证 -->
+            <div id="authSection" class="card" style="max-width: 400px; margin: 0 auto;">
+                <h3 style="margin-bottom: 20px;"><i class="fas fa-key"></i> 管理员验证</h3>
+                <div class="form-group">
+                    <input type="password" id="adminPassword" class="input-field" placeholder="请输入管理密码">
+                </div>
+                <button onclick="loginAdmin()" class="btn">登录</button>
+            </div>
+            
+            <!-- 管理面板 -->
+            <div id="adminPanel" style="display: none;">
+                <div style="margin-bottom: 20px;">
+                    <input type="text" id="searchInput" class="input-field" placeholder="搜索问题..." onkeyup="searchQuestions()">
+                </div>
+                
+                <div id="adminQuestionsList">
+                    <!-- 管理问题列表动态加载 -->
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button onclick="showSection('home')" class="btn">
+                        <i class="fas fa-arrow-left"></i> 返回主页
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 回复模态框 -->
+    <div id="replyModal" class="modal">
+        <div class="modal-content">
+            <h3>回复问题 <span id="modalQuestionId"></span></h3>
+            <div id="modalQuestionContent" style="margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 8px;"></div>
+            <textarea id="replyText" class="textarea-field" placeholder="在这里输入回复..." rows="5"></textarea>
+            <div style="margin-top: 20px; text-align: right;">
+                <button onclick="closeModal()" class="btn" style="background: #6c757d; margin-right: 10px;">取消</button>
+                <button onclick="submitReply()" class="btn">发送回复</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 数据存储 ====================
+        const STORAGE_KEY = 'questionBoxData';
+        let questions = [];
+        let currentQuestionId = null;
+        
+        // 初始化数据
+        function initData() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                questions = JSON.parse(savedData);
+            } else {
+                // 初始示例数据
+                questions = [
+                    {
+                        id: 1,
+                        username: '好奇的猫',
+                        question: '这个提问箱是怎么搭建的？',
+                        answer: '这个提问箱使用纯前端技术实现，数据存储在浏览器本地。',
+                        is_public: true,
+                        created_at: new Date(Date.now() - 3*24*60*60*1000).toISOString(),
+                        answered_at: new Date(Date.now() - 2*24*60*60*1000).toISOString()
+                    },
+                    {
+                        id: 2,
+                        username: '匿名用户',
+                        question: '提问可以选择不公开吗？',
+                        answer: '可以的！在提问页面有一个"公开此问题"的复选框，如果不勾选，问题就不会显示在公开主页上。',
+                        is_public: true,
+                        created_at: new Date(Date.now() - 2*24*60*60*1000).toISOString(),
+                        answered_at: new Date(Date.now() - 1*24*60*60*1000).toISOString()
+                    },
+                    {
+                        id: 3,
+                        username: '技术小白',
+                        question: '这个项目适合初学者学习吗？',
+                        answer: null,
+                        is_public: true,
+                        created_at: new Date(Date.now() - 1*24*60*60*1000).toISOString()
+                    }
+                ];
+                saveData();
+            }
+        }
+        
+        // 保存数据到LocalStorage
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(questions));
+        }
+        
+        // ==================== 页面切换 ====================
+        function showSection(sectionId) {
+            // 隐藏所有部分
+            document.getElementById('homeSection').style.display = 'none';
+            document.getElementById('askSection').style.display = 'none';
+            document.getElementById('adminSection').style.display = 'none';
+            
+            // 显示选中的部分
+            document.getElementById(sectionId + 'Section').style.display = 'block';
+            
+            // 更新导航栏
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // 加载对应部分的数据
+            if (sectionId === 'home') {
+                loadPublicQuestions();
+            } else if (sectionId === 'admin') {
+                // 显示密码验证
+                document.getElementById('authSection').style.display = 'block';
+                document.getElementById('adminPanel').style.display = 'none';
+            }
+        }
+        
+        // ==================== 公开问答功能 ====================
+        function loadPublicQuestions() {
+            const container = document.getElementById('questionsList');
+            const publicQuestions = questions.filter(q => q.is_public);
+            
+            if (publicQuestions.length === 0) {
+                container.innerHTML = `
+                    <div class="card" style="text-align: center; padding: 40px;">
+                        <i class="fas fa-comment-dots" style="font-size: 3rem; color: var(--primary-pink); opacity: 0.7; margin-bottom: 20px;"></i>
+                        <h3>还没有公开的问答</h3>
+                        <p>快来成为第一个提问的人吧！</p>
+                        <button onclick="showSection('ask')" class="btn" style="margin-top: 20px;">去提问</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            publicQuestions.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                const date = new Date(q.created_at).toLocaleString('zh-CN');
+                
+                card.innerHTML = `
+                    <div class="question-meta">
+                        <div>
+                            <span class="username">
+                                <i class="fas fa-user"></i> ${q.username || '匿名用户'}
+                            </span>
+                            <span class="time"><i class="far fa-clock"></i> ${date}</span>
+                        </div>
+                    </div>
+                    <div class="question-content">${escapeHtml(q.question)}</div>
+                    ${q.answer ? `
+                        <div class="answer-section">
+                            <span style="color: #339af0; font-weight: 600; margin-bottom: 10px; display: block;">
+                                <i class="fas fa-reply"></i> 我的回复：
+                            </span>
+                            <div>${escapeHtml(q.answer)}</div>
+                        </div>
+                    ` : ''}
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+        
+        function refreshQuestions() {
+            loadPublicQuestions();
+        }
+        
+        // ==================== 提问功能 ====================
+        document.getElementById('questionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const usernameInput = document.getElementById('username');
+            const anonymousCheckbox = document.getElementById('anonymous');
+            const questionInput = document.getElementById('question');
+            const isPublicCheckbox = document.getElementById('isPublic');
+            
+            // 确定用户名
+            let username = usernameInput.value.trim();
+            if (anonymousCheckbox.checked || username === '') {
+                username = '匿名用户';
+            }
+            
+            if (!questionInput.value.trim()) {
+                alert('请输入问题内容');
+                return;
+            }
+            
+            // 创建新问题
+            const newQuestion = {
+                id: questions.length > 0 ? Math.max(...questions.map(q => q.id)) + 1 : 1,
+                username: username,
+                question: questionInput.value.trim(),
+                answer: null,
+                is_public: isPublicCheckbox.checked,
+                created_at: new Date().toISOString()
+            };
+            
+            // 添加到列表并保存
+            questions.push(newQuestion);
+            saveData();
+            
+            alert('问题已发送成功！');
+            
+            // 清空表单
+            questionInput.value = '';
+            usernameInput.value = '';
+            anonymousCheckbox.checked = true;
+            
+            // 返回主页
+            showSection('home');
+        });
+        
+        // 匿名选项逻辑
+        document.getElementById('anonymous').addEventListener('change', function() {
+            const usernameInput = document.getElementById('username');
+            usernameInput.disabled = this.checked;
+        });
+        
+        // ==================== 管理后台功能 ====================
+        function loginAdmin() {
+            const password = document.getElementById('adminPassword').value;
+            // 默认密码：admin123
+            if (password === 'admin123') {
+                document.getElementById('authSection').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                loadAdminQuestions();
+            } else {
+                alert('密码错误');
+            }
+        }
+        
+        function loadAdminQuestions() {
+            const container = document.getElementById('adminQuestionsList');
+            
+            if (questions.length === 0) {
+                container.innerHTML = `
+                    <div class="card" style="text-align: center; padding: 40px;">
+                        <i class="fas fa-inbox" style="font-size: 3rem; color: var(--primary-pink); opacity: 0.7; margin-bottom: 20px;"></i>
+                        <h3>还没有提问</h3>
+                        <p>等待用户提问</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            questions.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.style.marginBottom = '15px';
+                
+                const date = new Date(q.created_at).toLocaleString('zh-CN');
+                const statusBadge = q.is_public ? 
+                    '<span class="status-badge">公开</span>' : 
+                    '<span class="status-badge" style="background: #fff3bf; color: #e67700;">非公开</span>';
+                
+                const answerBadge = q.answer ? 
+                    '<span class="status-badge" style="background: #d0ebff; color: #1971c2; margin-left: 5px;">已回复</span>' : 
+                    '<span class="status-badge" style="background: #ffc9c9; color: #c92a2a; margin-left: 5px;">待回复</span>';
+                
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <div>
+                            <span class="username">${q.username}</span>
+                            <span class="time">${date}</span>
+                            ${statusBadge}
+                            ${answerBadge}
+                        </div>
+                        <div style="color: #868e96; font-size: 0.9rem;">ID: ${q.id}</div>
+                    </div>
+                    <div class="question-content">${escapeHtml(q.question)}</div>
+                    ${q.answer ? `
+                        <div class="answer-section" style="margin-top: 15px;">
+                            <span style="color: #339af0; font-weight: 600; margin-bottom: 10px; display: block;">
+                                我的回复：
+                            </span>
+                            <div>${escapeHtml(q.answer)}</div>
+                        </div>
+                    ` : ''}
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        ${!q.answer ? `
+                            <button onclick="openReplyModal(${q.id})" class="btn" style="padding: 8px 16px; font-size: 0.9rem;">
+                                <i class="fas fa-reply"></i> 回复
+                            </button>
+                        ` : ''}
+                        <button onclick="deleteQuestion(${q.id})" class="btn" style="padding: 8px 16px; font-size: 0.9rem; background: #e74c3c;">
+                            <i class="fas fa-trash"></i> 删除
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+        
+        function searchQuestions() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('#adminQuestionsList .card');
+            
+            cards.forEach(card => {
+                const content = card.querySelector('.question-content').textContent.toLowerCase();
+                const username = card.querySelector('.username').textContent.toLowerCase();
+                card.style.display = (content.includes(searchTerm) || username.includes(searchTerm)) ? 'block' : 'none';
+            });
+        }
+        
+        // ==================== 回复功能 ====================
+        function openReplyModal(questionId) {
+            currentQuestionId = questionId;
+            const question = questions.find(q => q.id === questionId);
+            
+            document.getElementById('modalQuestionId').textContent = `#${questionId}`;
+            document.getElementById('modalQuestionContent').textContent = question.question;
+            document.getElementById('replyText').value = question.answer || '';
+            document.getElementById('replyModal').style.display = 'flex';
+        }
+        
+        function closeModal() {
+            document.getElementById('replyModal').style.display = 'none';
+            currentQuestionId = null;
+        }
+        
+        function submitReply() {
+            const answer = document.getElementById('replyText').value.trim();
+            
+            if (!answer) {
+                alert('请输入回复内容');
+                return;
+            }
+            
+            const questionIndex = questions.findIndex(q => q.id === currentQuestionId);
+            if (questionIndex !== -1) {
+                questions[questionIndex].answer = answer;
+                questions[questionIndex].answered_at = new Date().toISOString();
+                saveData();
+                
+                alert('回复成功！');
+                closeModal();
+                loadAdminQuestions();
+                loadPublicQuestions(); // 更新主页
+            }
+        }
+        
+        // ==================== 删除功能 ====================
+        function deleteQuestion(questionId) {
+            if (!confirm('确定要删除这个问题吗？此操作不可恢复。')) {
+                return;
+            }
+            
+            questions = questions.filter(q => q.id !== questionId);
+            saveData();
+            alert('删除成功');
+            loadAdminQuestions();
+            loadPublicQuestions(); // 更新主页
+        }
+        
+        // ==================== 工具函数 ====================
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // ==================== 初始化 ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            initData();
+            loadPublicQuestions();
+            
+            // 设置匿名选项
+            document.getElementById('anonymous').checked = true;
+            document.getElementById('username').disabled = true;
+            
+            // ESC键关闭模态框
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
